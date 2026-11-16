@@ -34,7 +34,7 @@ ZONA_WAKTU_JAM = 7                # jam di pesan: 7 = WIB, 8 = WITA, 9 = WIT
 # Pengaturan tambahan (opsional)
 MIN_KEYAKINAN = 75                # sinyal ditahan jika skor < nilai ini
 COOLDOWN_JAM = 4                  # jangan kirim ulang sinyal arah sama dalam X jam
-GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_MODEL = "gemini-3.8-flash"
 ADX_MIN = 22                      # tren dianggap bertenaga jika ADX 1H >= nilai ini
 RSI_AMAN_MIN = 32                 # RSI 15M harus di antara MIN dan MAX agar AI dipanggil
 RSI_AMAN_MAX = 68
