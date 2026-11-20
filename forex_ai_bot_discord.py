@@ -1963,7 +1963,7 @@ def scan_sekali(paksa: bool = False) -> int:
             log(f"Scan {symbol} dilewati: pasar tutup.")
             continue
         try:
-            h = analisa_pair(symbol, buat_gambar=False)
+            h = analisa_pair(symbol, buat_gambar=True)
             dicoba += 1
             if (not h["ok"]) and "Gagal mengambil data" in str(h.get("error")):
                 gagal_data += 1
