@@ -1,0 +1,65 @@
+# Simpan file ini di repo dengan path: .github/workflows/forex-bot-discord.yml
+name: Forex AI Bot Discord
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: forex-bot-discord
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  jalankan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Ambil kode
+        uses: actions/checkout@v4
+
+      - name: Siapkan Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-discord.txt
+
+      - name: Pasang library
+        run: pip install -r requirements-discord.txt
+
+      - name: Siapkan folder state
+        run: mkdir -p state
+
+      - name: Pulihkan state terakhir
+        uses: actions/cache/restore@v4
+        with:
+          path: state
+          key: forex-discord-state-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            forex-discord-state-
+
+      - name: Jalankan bot (sekali per jadwal)
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ADMIN_USER_ID: ${{ secrets.ADMIN_USER_ID }}
+          MODAL_AWAL_USD: ${{ secrets.MODAL_AWAL_USD }}
+          RISIKO_PER_TRADE_PERSEN: ${{ secrets.RISIKO_PER_TRADE_PERSEN }}
+          WATCHLIST: ${{ secrets.WATCHLIST }}
+          ZONA_WAKTU_JAM: ${{ secrets.ZONA_WAKTU_JAM }}
+          BOT_STATE_DIR: state
+        run: python forex_ai_bot_discord.py --once
+
+      - name: Simpan state
+        if: always()
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: state
+          key: forex-discord-state-${{ github.run_id }}-${{ github.run_attempt }}
